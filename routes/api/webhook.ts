@@ -30,7 +30,8 @@ export const handler: Handlers = {
     }
 
     if (
-      req.headers.get("x-github-event") !== "create"
+      req.headers.get("x-github-event") !== "create" &&
+      req.headers.get("x-github-event") !== "ping"
     ) return Response.json({ error: "Invalid github event!" }, { status: 400 });
 
     if (
@@ -65,6 +66,39 @@ export const handler: Handlers = {
       body = await req.json();
     } catch {
       return Response.json({ error: "Could not parse body!" }, { status: 400 });
+    }
+
+    if (req.headers.get("x-github-event") === "ping") {
+      if (
+        !(
+          typeof body === "object" && body !== null &&
+          typeof body.description === "string" &&
+          typeof body.repository === "object" &&
+          body.repository !== null && typeof body.repository.id === "number" &&
+          typeof body.repository.name === "string" &&
+          typeof body.repository.full_name === "string" &&
+          typeof body.repository.private === "boolean" &&
+          typeof body.repository.owner === "object" &&
+          body.repository.owner !== null &&
+          typeof body.repository.owner.login === "string" &&
+          typeof body.repository.owner.id === "number" &&
+          (typeof body.repository.owner.avatar_url === "string" ||
+            typeof body.repository.owner.avatar_url === "undefined") &&
+          typeof body.repository.owner.html_url === "string" &&
+          typeof body.repository.owner.type === "string" &&
+          typeof body.repository.url === "string" &&
+          typeof body.repository.visibility === "string" &&
+          typeof body.sender === "object" && body.sender !== null &&
+          typeof body.sender.login === "string" &&
+          typeof body.sender.id === "number" &&
+          (typeof body.sender.avatar_url === "string" ||
+            typeof body.sender.avatar_url === "undefined") &&
+          typeof body.sender.html_url === "string" &&
+          typeof body.sender.type === "string"
+        )
+      ) return Response.json({ error: "Invalid body!" }, { status: 400 });
+      // todo(imjamesb): Register the crate in the database.
+      return Response.json({ error: "not implemented" }, { status: 501 });
     }
 
     if (
@@ -113,6 +147,7 @@ export const handler: Handlers = {
       });
     }
 
+    // Create a new tag on the crate.
     return Response.json({ error: "not implemented" }, { status: 501 });
   },
 };
