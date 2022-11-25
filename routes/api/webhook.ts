@@ -148,7 +148,10 @@ export const handler: Handlers = {
           { status: 400 },
         );
       }
-      // todo(imjamesb): Register the crate in the database.
+      // todo(imjamesb): Check if the crate is already registered. If it is, return an error.
+      // if the crate is not registered, check if the owner of the repository is allowed to create crates. If not, return an error.
+      // Check if the owner is allowed to create more crates (based on max_crates).
+      // register the crate.
       return Response.json({ error: "not implemented" }, { status: 501 });
     }
 
@@ -163,7 +166,7 @@ export const handler: Handlers = {
       });
     }
 
-    // Create a new tag on the crate.
+    // todo(imjamesb): Check if the crate is already registered, if it is not, return an error.
     return Response.json({ error: "not implemented" }, { status: 501 });
   },
 };
