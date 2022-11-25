@@ -1,0 +1,23 @@
+version: "3.8"
+services:
+  postgres:
+    image: "postgres:14-alpine"
+    restart: "unless-stopped"
+    ports:
+      - "127.0.0.1:9987:5432"
+    environment:
+      POSTGRES_USER: "dev"
+      POSTGRES_PASSWORD: "dev"
+      POSTGRES_DB: "dev"
+    volumes:
+      - "./.data/docker/pgdev:/var/lib/postgresql/data"
+  adminer:
+    image: "adminer:4"
+    restart: "unless-stopped"
+    ports:
+      - "9986:8080"
+    environment:
+      ADMINER_DESIGN: "hydra"
+      ADMINER_DEFAULT_SERVER: "postgres"
+    depends_on:
+      - "postgres"
