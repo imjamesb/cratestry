@@ -151,6 +151,7 @@ export const handler: Handlers = {
       // todo(imjamesb): Register the crate in the database.
       return Response.json({ error: "not implemented" }, { status: 501 });
     }
+
     try {
       assertHook(body);
       assert(typeof body.ref === "string", "ref must be a string!");
@@ -158,18 +159,6 @@ export const handler: Handlers = {
       assert(body.ref_type === "tag", "ref_type must be 'tag'!");
     } catch (error) {
       return Response.json({ error: "Invalid body!", reason: error.message }, {
-        status: 400,
-      });
-    }
-
-    if (body.ref_type !== "tag") {
-      return Response.json({ error: "ref_type must be a tag!" }, {
-        status: 400,
-      });
-    }
-
-    if (body.repository.private !== true) {
-      return Response.json({ error: "Visibility must be public!" }, {
         status: 400,
       });
     }
