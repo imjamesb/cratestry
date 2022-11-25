@@ -138,7 +138,7 @@ export const handler: Handlers = {
           "repository.visibility must be 'public'!",
         );
         assert(
-          body.repository.private !== false,
+          body.repository.private === false,
           "Repository must be public!",
         );
         assertOwnerType(body.repository.owner, "repository.owner");
