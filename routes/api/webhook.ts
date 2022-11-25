@@ -29,6 +29,56 @@ function assertOwnerType(value: any, kind: "repository.owner" | "sender") {
   assert(typeof value.type === "string", `${kind}.type must be a string!`);
 }
 
+function assertHook(body: any) {
+  assert(
+    typeof body === "object" && body !== null,
+    "Body must be an object!",
+  );
+  assert(
+    typeof body.description === "string" || body.description === null ||
+      typeof body.description === "undefined",
+    "Repository description must be undefined, null or string!",
+  );
+  assert(
+    typeof body.repository === "object" && body.repository !== null,
+    "Repository must be an object!",
+  );
+  assert(
+    typeof body.repository.id === "number",
+    "Repository ID must be a number!",
+  );
+  assert(
+    typeof body.repository.name === "string",
+    "Repository name must be a string!",
+  );
+  assert(
+    typeof body.repository.full_name === "string",
+    "Repository full_name must be a string!",
+  );
+  assert(
+    typeof body.repository.private === "boolean",
+    "repository.private must be a boolean!",
+  );
+  assert(
+    typeof body.repository.visibility === "string",
+    "repository.visibility must be a string!",
+  );
+  assert(
+    typeof body.repository.html_url === "string",
+    "repository.html_url must be a string!",
+  );
+  assert(
+    body.repository.visibility === "public",
+    "repository.visibility must be 'public'!",
+  );
+  assert(
+    body.repository.private === false,
+    "Repository must be public!",
+  );
+  assertOwnerType(body.repository.owner, "repository.owner");
+  assertOwnerType(body.sender, "sender");
+}
+
 export const handler: Handlers = {
   POST: async (req: Request, ctx: HandlerContext): Promise<Response> => {
     const { name } = ctx.params;
@@ -91,53 +141,7 @@ export const handler: Handlers = {
 
     if (req.headers.get("x-github-event") === "ping") {
       try {
-        assert(
-          typeof body === "object" && body !== null,
-          "Body must be an object!",
-        );
-        assert(
-          typeof body.description === "string" || body.description === null ||
-            typeof body.description === "undefined",
-          "Repository description must be undefined, null or string!",
-        );
-        assert(
-          typeof body.repository === "object" && body.repository !== null,
-          "Repository must be an object!",
-        );
-        assert(
-          typeof body.repository.id === "number",
-          "Repository ID must be a number!",
-        );
-        assert(
-          typeof body.repository.name === "string",
-          "Repository name must be a string!",
-        );
-        assert(
-          typeof body.repository.full_name === "string",
-          "Repository full_name must be a string!",
-        );
-        assert(
-          typeof body.repository.private === "boolean",
-          "repository.private must be a boolean!",
-        );
-        assert(
-          typeof body.repository.visibility === "string",
-          "repository.visibility must be a string!",
-        );
-        assert(
-          typeof body.repository.html_url === "string",
-          "repository.html_url must be a string!",
-        );
-        assert(
-          body.repository.visibility === "public",
-          "repository.visibility must be 'public'!",
-        );
-        assert(
-          body.repository.private === false,
-          "Repository must be public!",
-        );
-        assertOwnerType(body.repository.owner, "repository.owner");
-        assertOwnerType(body.sender, "sender");
+        assertHook(body);
       } catch (error) {
         return Response.json(
           { error: "Invalid body!", reason: error.message },
@@ -147,39 +151,15 @@ export const handler: Handlers = {
       // todo(imjamesb): Register the crate in the database.
       return Response.json({ error: "not implemented" }, { status: 501 });
     }
-
-    if (
-      !(
-        typeof body === "object" && body !== null &&
-        typeof body.ref === "string" &&
-        typeof body.ref_type === "string" &&
-        typeof body.description === "string" &&
-        typeof body.pusher_type === "string" &&
-        typeof body.repository === "object" &&
-        body.repository !== null && typeof body.repository.id === "number" &&
-        typeof body.repository.name === "string" &&
-        typeof body.repository.full_name === "string" &&
-        typeof body.repository.private === "boolean" &&
-        typeof body.repository.owner === "object" &&
-        body.repository.owner !== null &&
-        typeof body.repository.owner.login === "string" &&
-        typeof body.repository.owner.id === "number" &&
-        (typeof body.repository.owner.avatar_url === "string" ||
-          typeof body.repository.owner.avatar_url === "undefined") &&
-        typeof body.repository.owner.html_url === "string" &&
-        typeof body.repository.owner.type === "string" &&
-        typeof body.repository.html_url === "string" &&
-        typeof body.repository.visibility === "string" &&
-        typeof body.sender === "object" && body.sender !== null &&
-        typeof body.sender.login === "string" &&
-        typeof body.sender.id === "number" &&
-        (typeof body.sender.avatar_url === "string" ||
-          typeof body.sender.avatar_url === "undefined") &&
-        typeof body.sender.html_url === "string" &&
-        typeof body.sender.type === "string"
-      )
-    ) {
-      return Response.json({ error: "Invalid body!" }, { status: 400 });
+    try {
+      assertHook(body);
+      assert(typeof body.ref === "string", "ref must be a string!");
+      assert(typeof body.ref_type === "string", "ref_type must be a string!");
+      assert(body.ref_type === "tag", "ref_type must be 'tag'!");
+    } catch (error) {
+      return Response.json({ error: "Invalid body!", reason: error.message }, {
+        status: 400,
+      });
     }
 
     if (body.ref_type !== "tag") {
