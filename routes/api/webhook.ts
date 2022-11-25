@@ -167,6 +167,10 @@ export const handler: Handlers = {
     }
 
     // todo(imjamesb): Check if the crate is already registered, if it is not, return an error.
+    // Check if this tag/version has been registered before. If it has, return an error.
+    // Create the version in the database.
+    // Pull and decompress the git reference, upload each file to S3 and create entries in the database for the files.
+    // Deploy the version in the database.
     return Response.json({ error: "not implemented" }, { status: 501 });
   },
 };
