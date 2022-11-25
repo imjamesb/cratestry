@@ -5,7 +5,7 @@ import {
 } from "$fresh/server.ts";
 
 export const config: RouteConfig = {
-  routeOverride: "/:name",
+  routeOverride: "/api/webhook/:name",
 };
 
 export const handler: Handlers = {
