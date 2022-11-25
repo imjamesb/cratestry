@@ -86,7 +86,7 @@ export const handler: Handlers = {
             typeof body.repository.owner.avatar_url === "undefined") &&
           typeof body.repository.owner.html_url === "string" &&
           typeof body.repository.owner.type === "string" &&
-          typeof body.repository.url === "string" &&
+          typeof body.repository.html_url === "string" &&
           typeof body.repository.visibility === "string" &&
           typeof body.sender === "object" && body.sender !== null &&
           typeof body.sender.login === "string" &&
@@ -121,7 +121,7 @@ export const handler: Handlers = {
           typeof body.repository.owner.avatar_url === "undefined") &&
         typeof body.repository.owner.html_url === "string" &&
         typeof body.repository.owner.type === "string" &&
-        typeof body.repository.url === "string" &&
+        typeof body.repository.html_url === "string" &&
         typeof body.repository.visibility === "string" &&
         typeof body.sender === "object" && body.sender !== null &&
         typeof body.sender.login === "string" &&
